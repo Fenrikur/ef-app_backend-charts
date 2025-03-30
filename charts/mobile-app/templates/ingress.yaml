@@ -1,0 +1,49 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Release.Name }}-ingress
+  namespace: {{ .Release.Namespace }}
+  annotations:
+  {{- with .Values.ingress.annotations }}
+    {{- range $key, $value := . }}
+    {{ $key }}: {{ tpl (toString $value) $ | quote }}
+    {{- end }}
+  {{- end }}
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+    nginx.ingress.kubernetes.io/use-regex: "true"
+  labels:
+    app: {{ .Release.Name }}
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: {{ .Values.ingress.host | default .Values.global.domain | quote }}
+      http:
+        paths:
+          # Prevent access to convention-versioned endpoints
+          - path: "/($|[^/]+\\.[^/]*$|\\.well-known/(?:assetlinks.json|apple-app-site-association)|css/.*|fonts/.*|images/.*|scripts/.*|webfonts/.*|qr/.*|qrcode/.*)"
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: {{ include "ef-mobile-app.deploymentName" ( list $ .Values.mainDeployment ) }}-backend
+                port:
+                  name: http
+          {{- range $key, $value := .Values.deployments }}
+          - path: {{ $value.cid | printf "/%s/backoffice(?:/|$)(.*)" | quote }}
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: {{ include "ef-mobile-app.deploymentName" ( list $ $key ) }}-backoffice
+                port:
+                  name: http
+          - path: {{ $value.cid | printf "/%s(?:/|$)(.*)" | quote }}
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: {{ include "ef-mobile-app.deploymentName" ( list $ $key ) }}-backend
+                port:
+                  name: http
+          {{- end }}
+  tls:
+    - hosts:
+        - {{ .Values.ingress.host | default .Values.global.domain | quote }}
+      secretName: {{ .Release.Name }}-certificate

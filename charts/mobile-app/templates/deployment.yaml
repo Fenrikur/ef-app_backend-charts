@@ -1,0 +1,123 @@
+{{- range $key, $value := .Values.deployments }}
+{{- $deploymentName := ( include "ef-mobile-app.deploymentName" ( list $ $key ) | quote ) }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $deploymentName }}
+  namespace: {{ $.Release.Namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      deployment: {{ $deploymentName }}
+  template:
+    metadata:
+      labels:
+        app: {{ $.Release.Name }}
+        deployment: {{ $deploymentName }}
+    spec:
+      initContainers:
+        - name: db-migration
+          {{ include "ef-mobile-app.image" ( list $ $value "ef-app_backend-dotnet-core" ) }}
+          {{ include "ef-mobile-app.imagePullPolicy" ( list $ $value ) }}
+          resources:
+            {{- toYaml .backend.resources | nindent 12 }}
+          volumeMounts:
+            - mountPath: /app/appsettings.json
+              name: backend-config
+              readOnly: true
+              subPath: appsettings.json
+          command: ["/app/db-migration-bundle"]
+      containers:
+        - name: backend
+          {{ include "ef-mobile-app.image" ( list $ $value "ef-app_backend-dotnet-core" ) }}
+          {{ include "ef-mobile-app.imagePullPolicy" ( list $ $value ) }}
+          livenessProbe:
+            initialDelaySeconds: 5
+            tcpSocket:
+              port: 30001
+          readinessProbe:
+            initialDelaySeconds: 5
+            tcpSocket:
+              port: 30001
+          resources:
+            {{- toYaml .backend.resources | nindent 12 }}
+          env:
+            - name: CID_IN_API_BASE_PATH
+              value: "1"
+          volumeMounts:
+            - mountPath: /app/appsettings.json
+              name: backend-config
+              readOnly: true
+              subPath: appsettings.json
+            - mountPath: /app/firebase.json
+              name: backend-config
+              readOnly: true
+              subPath: firebase.json
+            - mountPath: /app/wwwroot/.well-known/apple-app-site-association.json
+              name: well-known
+              readOnly: true
+              subPath: apple-app-site-association.json
+            - mountPath: /app/wwwroot/.well-known/assetlinks.json
+              name: well-known
+              readOnly: true
+              subPath: assetlinks.json
+          ports:
+            - containerPort: 30001
+              name: http-backend
+          command:
+            ["dotnet", "Eurofurence.App.Server.Web.dll", "http://*:30001"]
+        - name: backoffice
+          {{ include "ef-mobile-app.image" ( list $ $value "ef-app_backend-dotnet-core-backoffice" ) }}
+          {{ include "ef-mobile-app.imagePullPolicy" ( list $ $value ) }}
+          livenessProbe:
+            initialDelaySeconds: 5
+            tcpSocket:
+              port: 8080
+          readinessProbe:
+            initialDelaySeconds: 5
+            tcpSocket:
+              port: 8080
+          resources:
+            {{- toYaml .backoffice.resources | nindent 12 }}
+          env:
+            - name: BACKOFFICE_BASE_PATH
+              value: {{ printf "/%s/backoffice" $value.cid | quote }}
+          volumeMounts:
+            - mountPath: /usr/share/nginx/html/appsettings.json
+              name: backoffice-config
+              readOnly: true
+              subPath: appsettings-backoffice.json
+          ports:
+            - containerPort: 8080
+              name: http-backoffice
+      volumes:
+        - name: backend-config
+          {{- if ($value.backend | default dict).configVolume | default 0 -}}
+          {{- toYaml .backend.configVolume | nindent 10 }}
+          {{- else if $.Values.infisical.enabled}}
+          secret:
+            secretName: {{ printf "%s-backend-config" $deploymentName | quote }}
+          {{- else -}}
+          {{ fail "Please configure backend.configVolume for the deployment or use infisical." }}
+          {{- end}}
+        - name: backoffice-config
+          {{- if ($value.backend | default dict).configVolume | default 0 -}}
+          {{- toYaml .backoffice.configVolume | nindent 10 }}
+          {{- else if $.Values.infisical.enabled}}
+          configMap:
+            name: {{ printf "%s-backoffice-config" $deploymentName | quote }}
+          {{- else -}}
+          {{ fail "Please configure backoffice.configVolume for the deployment or use infisical." }}
+          {{- end}}
+        - name: well-known
+          {{- if $value.wellKnownVolume | default 0 -}}
+          {{- toYaml .wellKnownVolume | nindent 10 }}
+          {{- else if $.Values.infisical.enabled}}
+          configMap:
+            name: {{ printf "%s-well-known" $deploymentName | quote }}
+          {{- else -}}
+          {{ fail "Please configure wellKnownVolume for the deployment or use infisical." }}
+          {{- end}}
+---
+{{- end}}

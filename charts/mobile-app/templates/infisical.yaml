@@ -1,0 +1,40 @@
+{{- if .Values.infisical.enabled }}
+{{- range $key, $value := .Values.deployments }}
+{{- $deploymentName := ( include "ef-mobile-app.deploymentName" ( list $ $key ) ) }}
+apiVersion: secrets.infisical.com/v1alpha1
+kind: InfisicalSecret
+metadata:
+  name: {{ printf "%s-infisical" $deploymentName | quote }}
+  namespace: {{ $.Release.Namespace }}
+spec:
+  authentication:
+    {{- toYaml $.Values.infisical.authentication | nindent 4 }}
+  managedKubeSecretReferences:
+    - secretName: {{ printf "%s-backend-config" $deploymentName | quote }}
+      secretNamespace: {{ $.Release.Namespace }}
+      secretType: Opaque
+      creationPolicy: Orphan
+      template:
+        includeAllSecrets: false
+        data:
+          appsettings.json: {{ printf "{{ .%s_appsettings_json.Value }}" $key | quote }}
+          firebase.json: {{ printf "{{ .%s_firebase_json.Value }}" $key | quote }}
+  managedKubeConfigMapReferences:
+    - configMapName: {{ printf "%s-backoffice-config" $deploymentName | quote }}
+      configMapNamespace: {{ $.Release.Namespace }}
+      creationPolicy: Orphan
+      template:
+        includeAllSecrets: false
+        data:
+          appsettings-backoffice.json: {{ printf "{{ .%s_appsettings_backoffice_json.Value }}" $key | quote }}
+    - configMapName: {{ printf "%s-well-known" $deploymentName | quote }}
+      configMapNamespace: {{ $.Release.Namespace }}
+      creationPolicy: Orphan
+      template:
+        includeAllSecrets: false
+        data:
+          apple-app-site-association.json: {{ printf "{{ .%s_apple_app_site_association_json.Value }}" $key | quote }}
+          assetlinks.json: {{ printf "{{ .%s_assetlinks_json.Value }}" $key | quote }}
+---
+{{- end}}
+{{- end}}

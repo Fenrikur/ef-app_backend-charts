@@ -1,0 +1,14 @@
+{{- range $key, $value := .Values.deployments }}
+{{- $deploymentName := ( include "ef-mobile-app.deploymentName" ( list $ $key ) ) }}
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ printf "%s-pdb" $deploymentName | quote }}
+  namespace: {{ $.Release.Namespace }}
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      deployment: {{ $deploymentName | quote }}
+---
+{{- end}}

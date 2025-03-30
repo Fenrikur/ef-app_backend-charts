@@ -1,0 +1,60 @@
+global:
+  image:
+    repository: ghcr.io/eurofurence
+    imagePullPolicy: Always
+  version: "3.6.0"
+
+ingress:
+  ## Domain under which the backend will be hosted
+  host: app.example.com
+
+  ## Optionally provide additional annotations
+  ## e.g. for cert-manager.io/cluster-issuer or nginx.ingress.kubernetes.io
+  annotations:
+
+infisical:
+  enabled: true
+  authentication:
+    universalAuth:
+      secretsScope:
+        projectSlug: mobile-app-slug
+        envSlug: dev
+        secretsPath: "/"
+      credentialsRef:
+        secretName: universal-auth-credentials
+        secretNamespace: default
+
+mainDeployment: ef00
+
+deployments:
+  ef00:
+    version: "3.6.0"
+    cid: "EF00"
+    image:
+      repository: ghcr.io/eurofurence
+      imagePullPolicy: Always
+    backend:
+      resources:
+        requests:
+          memory: "64Mi"
+          cpu: "50m"
+        limits:
+          memory: "512Mi"
+          cpu: "1000m"
+      configVolume:
+        secret:
+          name: mobile-app-ef00-backend-config
+    backoffice:
+      resources:
+        requests:
+          memory: "64Mi"
+          cpu: "50m"
+        limits:
+          memory: "512Mi"
+          cpu: "500m"
+      configVolume:
+        configMap:
+          name: mobile-app-ef00-backoffice-config
+    wellKnownVolume:
+      configMap:
+        name: mobile-app-ef00-well-known
