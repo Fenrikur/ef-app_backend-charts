@@ -42,7 +42,7 @@ infisical:
 
 ## Identifier of the deployment (e.g. "ef00") which should serve the paths directly
 ## accessible from the `ingress.host` root like `/.well-known` and the app homepage.
-mainDeployment:
+mainDeployment: "default"
 
 ## Configure one or more named deployments to be hosted under `ingress.host`
 deployments:
@@ -62,7 +62,8 @@ deployments:
   #     imagePullPolicy: Always
   #   ## Backend component providing the API endpoints
   #   backend:
-  #     ## see https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
+  #     ## (optional) Optimise resource usage of deployment.
+  #     ## (see https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/)
   #     resources:
   #       requests:
   #         memory: "64Mi"
@@ -70,35 +71,39 @@ deployments:
   #       limits:
   #         memory: "512Mi"
   #         cpu: "1000m"
-  #     ## (not needed when using Infisical) Reference to configMap containing:
+  #     ## (not needed when using Infisical) Reference to volume containing:
   #     ## - `appsettings.json`
   #     ##   (see https://github.com/eurofurence/ef-app_backend-dotnet-core/blob/main/src/Eurofurence.App.Server.Web/appsettings.sample.json)
   #     ## - `firebase.json`
   #     ##   (see https://github.com/eurofurence/ef-app_backend-dotnet-core/blob/main/src/Eurofurence.App.Server.Web/firebase.sample.json)
+  #     ## (see https://kubernetes.io/docs/concepts/storage/volumes/)
   #     configVolume:
   #       secret:
   #         secretName: mobile-app-ef00-backend-config
   #   ## Backoffice component providing a web UI for convenient content management.
   #   backoffice:
-  #     ## see https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
+  #     ## (optional) Optimise resource usage of deployment.
+  #     ## (see https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/)
   #     resources:
-  #       requests:
-  #         memory: "64Mi"
-  #         cpu: "50m"
   #       limits:
-  #         memory: "512Mi"
   #         cpu: "500m"
-  #     ## (not needed when using Infisical) Reference to configMap containing:
+  #         memory: "512Mi"
+  #       requests:
+  #         cpu: "50m"
+  #         memory: "64Mi"
+  #     ## (not needed when using Infisical) Reference to volume containing:
   #     ## - `appsettings-backoffice.json`
   #     ##   (see https://github.com/eurofurence/ef-app_backend-dotnet-core/blob/main/src/Eurofurence.App.Backoffice/wwwroot/appsettings.sample.json)
+  #     ## (see https://kubernetes.io/docs/concepts/storage/volumes/)
   #     configVolume:
   #       configMap:
   #         name: mobile-app-ef00-backoffice-config
-  #   ## (not needed when using Infisical) Reference to configMap containing:
+  #   ## (not needed when using Infisical) Reference to volume containing:
   #   ## - `apple-app-site-association.json`
   #   ##   (see https://developer.apple.com/documentation/xcode/supporting-associated-domains)
   #   ## - `assetlinks.json`
   #   ##   (see https://developer.android.com/training/app-links/verify-android-applinks)
+  #   ## (see https://kubernetes.io/docs/concepts/storage/volumes/)
   #   wellKnownVolume:
   #     configMap:
   #       name: mobile-app-ef00-well-known

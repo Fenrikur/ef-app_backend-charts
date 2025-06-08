@@ -1,0 +1,178 @@
+{
+	"$schema": "https://json-schema.org/draft-07/schema#",
+	"$id": "http://fenrikur.github.io/ef-app_backend-charts/charts/mobile-app/values.schema.json",
+	"type": "object",
+	"properties": {
+		"global": {
+			"type": "object",
+			"properties": {
+				"image": {
+					"$ref": "#/$defs/image"
+				},
+				"version": {
+					"$ref": "#/$defs/version"
+				}
+			}
+		},
+		"ingress": {
+			"type": "object",
+			"properties": {
+				"host": {
+					"type": "string"
+				},
+				"annotations": {
+					"anyOf": [
+						{
+							"type": "object"
+						},
+						{
+							"type": "null"
+						}
+					]
+				}
+			},
+			"required": [
+				"host"
+			]
+		},
+		"infisical": {
+			"type": "object",
+			"properties": {
+				"enabled": {
+					"type": "boolean"
+				},
+				"authentication": {
+					"type": "object"
+				}
+			},
+			"required": [
+				"enabled"
+			]
+		},
+		"mainDeployment": {
+			"type": "string"
+		},
+		"deployments": {
+			"anyOf": [
+				{
+					"type": "null"
+				},
+				{
+					"type": "object",
+					"additionalProperties": {
+						"type": "object",
+						"properties": {
+							"version": {
+								"$ref": "#/$defs/version"
+							},
+							"cid": {
+								"type": "string",
+								"minLength": 1,
+								"pattern": "^[a-zA-Z0-9\\-_]+$"
+							},
+							"image": {
+								"$ref": "#/$defs/image"
+							},
+							"backend": {
+								"oneOf": [
+									{
+										"type": "null"
+									},
+									{
+										"type": "object",
+										"properties": {
+											"resources": {
+												"$ref": "#/$defs/resources"
+											},
+											"configVolume": {
+												"type": "object"
+											}
+										}
+									}
+								]
+							},
+							"backoffice": {
+								"oneOf": [
+									{
+										"type": "null"
+									},
+									{
+										"type": "object",
+										"properties": {
+											"resources": {
+												"$ref": "#/$defs/resources"
+											},
+											"configVolume": {
+												"type": "object"
+											}
+										}
+									}
+								]
+							},
+							"wellKnownVolume": {
+								"type": "object",
+								"properties": {
+									"configVolume": {
+										"type": "object"
+									}
+								}
+							}
+						},
+						"required": [
+							"cid",
+							"backend",
+							"backoffice"
+						]
+					}
+				}
+			]
+		}
+	},
+	"required": [
+		"global",
+		"ingress",
+		"infisical",
+		"mainDeployment",
+		"deployments"
+	],
+	"$defs": {
+		"version": {
+			"type": "string",
+			"pattern": "^(?P<major>0|[1-9]\\d*)\\.(?P<minor>0|[1-9]\\d*)\\.(?P<patch>0|[1-9]\\d*)(?:-(?P<prerelease>(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+(?P<buildmetadata>[0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$"
+		},
+		"image": {
+			"type": "object",
+			"properties": {
+				"repository": {
+					"type": "string"
+				},
+				"imagepPullPolicy": {
+					"type": "string",
+					"pattern": "^(Always|Never|IfNotPresent)$"
+				}
+			}
+		},
+		"resourcesCpuMemory": {
+			"type": "object",
+			"properties": {
+				"cpu": {
+					"type": "string"
+				},
+				"memory": {
+					"type": "string"
+				}
+			}
+		},
+		"resources": {
+			"type": "object",
+			"properties": {
+				"limits": {
+					"$ref": "#/$defs/resourcesCpuMemory"
+				},
+				"requests": {
+					"$ref": "#/$defs/resourcesCpuMemory"
+				}
+			}
+		}
+	}
+}
