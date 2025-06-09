@@ -5,7 +5,7 @@ global:
     repository: ghcr.io/eurofurence
     imagePullPolicy: Always
   ## Version of mobile app backend to be deployed
-  version: "3.6.0"
+  version: "v3.6.0"
 
 ingress:
   ## Domain under which the backend will be hosted
@@ -16,7 +16,7 @@ ingress:
 
 ## Allow use of Infisical (https://infisical.com) for secret management.
 ## Expects the following secrets per deployment, prefixed by deployment identifier:
-## - <deployment identifier>_apple_app_site_association_json_json
+## - <deployment identifier>_apple_app_site_association_json
 ##   (see https://developer.apple.com/documentation/xcode/supporting-associated-domains)
 ## - <deployment identifier>_appsettings_json
 ##   (see https://github.com/eurofurence/ef-app_backend-dotnet-core/blob/main/src/Eurofurence.App.Server.Web/appsettings.sample.json)
