@@ -1,7 +1,7 @@
 apiVersion: v2
-name: ef-mobile-app-backend
-version: 0.0.1-alpha
-description: Backend for the Eurofurence mobile app including an optional home page and web-based back office UI.
+name: mobile-app
+version: 0.0.1-alpha.1
+description: Backend & backoffice for the Eurofurence mobile app including an optional home page and web-based back office UI.
 keywords:
   - eurofurence
   - backend

@@ -1,20 +1,20 @@
 {{- range $key, $value := .Values.deployments }}
-{{- $deploymentName := ( include "ef-mobile-app.deploymentName" ( list $ $key ) | quote ) }}
+{{- $deploymentName := ( include "ef-mobile-app.deploymentName" ( list $ $key ) ) }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ $deploymentName }}
+  name: {{ $deploymentName | quote }}
   namespace: {{ $.Release.Namespace }}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      deployment: {{ $deploymentName }}
+      deployment: {{ $deploymentName | quote }}
   template:
     metadata:
       labels:
         app: {{ $.Release.Name }}
-        deployment: {{ $deploymentName }}
+        deployment: {{ $deploymentName | quote }}
     spec:
       initContainers:
         - name: db-migration
