@@ -13,7 +13,7 @@ spec:
     - secretName: {{ printf "%s-backend-config" $deploymentName | quote }}
       secretNamespace: {{ $.Release.Namespace }}
       secretType: Opaque
-      creationPolicy: Orphan
+      creationPolicy: Owner
       template:
         includeAllSecrets: false
         data:
@@ -22,14 +22,14 @@ spec:
   managedKubeConfigMapReferences:
     - configMapName: {{ printf "%s-backoffice-config" $deploymentName | quote }}
       configMapNamespace: {{ $.Release.Namespace }}
-      creationPolicy: Orphan
+      creationPolicy: Owner
       template:
         includeAllSecrets: false
         data:
           appsettings-backoffice.json: {{ printf "{{ .%s_appsettings_backoffice_json.Value }}" $key | quote }}
     - configMapName: {{ printf "%s-well-known" $deploymentName | quote }}
       configMapNamespace: {{ $.Release.Namespace }}
-      creationPolicy: Orphan
+      creationPolicy: Owner
       template:
         includeAllSecrets: false
         data:
