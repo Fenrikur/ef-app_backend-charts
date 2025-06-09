@@ -3,7 +3,7 @@ global:
   ## Source and policy for pulling container images
   image:
     repository: ghcr.io/eurofurence
-    imagePullPolicy: Always
+    imagePullPolicy: IfNotPresent
   ## Version of mobile app backend to be deployed
   version: "v3.6.0"
 
