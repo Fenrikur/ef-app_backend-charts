@@ -27,6 +27,29 @@ entries:
   mobile-app:
   - apiVersion: v2
     appVersion: v3.6.0
+    created: "2025-06-09T21:25:53.426253289Z"
+    description: Backend & backoffice for the Eurofurence mobile app including an
+      optional home page and web-based back office UI.
+    digest: 427502dba0e9369289a6ad026a659e358cf2085a1df40f711e66351fe634e34f
+    home: https://app.eurofurence.org
+    icon: https://app.eurofurence.org/images/ef-app-logo.png
+    keywords:
+    - eurofurence
+    - backend
+    - mobile-app
+    maintainers:
+    - name: Fenrikur
+      url: https://github.com/fenrikur
+    name: mobile-app
+    sources:
+    - https://github.com/eurofurence/ef-app_helm
+    - https://github.com/eurofurence/ef-app_backend-dotnet-core
+    - https://github.com/eurofurence/ef-app_react-native
+    urls:
+    - https://github.com/Fenrikur/ef-app_backend-charts/releases/download/mobile-app-0.0.1-alpha.3/mobile-app-0.0.1-alpha.3.tgz
+    version: 0.0.1-alpha.3
+  - apiVersion: v2
+    appVersion: v3.6.0
     created: "2025-06-09T21:23:43.992281843Z"
     description: Backend & backoffice for the Eurofurence mobile app including an
       optional home page and web-based back office UI.
@@ -71,4 +94,4 @@ entries:
     urls:
     - https://github.com/Fenrikur/ef-app_backend-charts/releases/download/mobile-app-0.0.1-alpha.1/mobile-app-0.0.1-alpha.1.tgz
     version: 0.0.1-alpha.1
-generated: "2025-06-09T21:23:43.992307972Z"
+generated: "2025-06-09T21:25:53.426273757Z"
