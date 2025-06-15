@@ -15,16 +15,17 @@ ingress:
   annotations:
 
 ## Allow use of Infisical (https://infisical.com) for secret management.
+## Secret keys are expected to be all uppercase to ensure backward compatibility.
 ## Expects the following secrets per deployment, prefixed by deployment identifier:
-## - <deployment identifier>_apple_app_site_association_json
+## - <deployment identifier all uppercase>_APPLE_APP_SITE_ASSOCIATION_JSON
 ##   (see https://developer.apple.com/documentation/xcode/supporting-associated-domains)
-## - <deployment identifier>_appsettings_json
+## - <deployment identifier all uppercase>_APPSETTINGS_JSON
 ##   (see https://github.com/eurofurence/ef-app_backend-dotnet-core/blob/main/src/Eurofurence.App.Server.Web/appsettings.sample.json)
-## - <deployment identifier>_appsettings_backoffice_json
+## - <deployment identifier all uppercase>_APPSETTINGS_BACKOFFICE_JSON
 ##   (see https://github.com/eurofurence/ef-app_backend-dotnet-core/blob/main/src/Eurofurence.App.Backoffice/wwwroot/appsettings.sample.json)
-## - <deployment identifier>_assetlinks_json_json
+## - <deployment identifier all uppercase>_ASSETLINKS_JSON_JSON
 ##   (see https://developer.android.com/training/app-links/verify-android-applinks)
-## - <deployment identifier>_firebase_json
+## - <deployment identifier all uppercase>_FIREBASE_JSON
 ##   (see https://github.com/eurofurence/ef-app_backend-dotnet-core/blob/main/src/Eurofurence.App.Server.Web/firebase.sample.json)
 infisical:
   enabled: true

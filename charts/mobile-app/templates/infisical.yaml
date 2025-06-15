@@ -17,8 +17,8 @@ spec:
       template:
         includeAllSecrets: false
         data:
-          appsettings.json: {{ printf "{{ .%s_appsettings_json.Value }}" $key | quote }}
-          firebase.json: {{ printf "{{ .%s_firebase_json.Value }}" $key | quote }}
+          appsettings.json: {{ printf "{{ .%s_APPSETTINGS_JSON.Value }}" (upper $key) | quote }}
+          firebase.json: {{ printf "{{ .%s_FIREBASE_JSON.Value }}" (upper $key) | quote }}
   managedKubeConfigMapReferences:
     - configMapName: {{ printf "%s-backoffice-config" $deploymentName | quote }}
       configMapNamespace: {{ $.Release.Namespace }}
@@ -26,15 +26,15 @@ spec:
       template:
         includeAllSecrets: false
         data:
-          appsettings-backoffice.json: {{ printf "{{ .%s_appsettings_backoffice_json.Value }}" $key | quote }}
+          appsettings-backoffice.json: {{ printf "{{ .%s_APPSETTINGS_BACKOFFICE_JSON.Value }}" (upper $key) | quote }}
     - configMapName: {{ printf "%s-well-known" $deploymentName | quote }}
       configMapNamespace: {{ $.Release.Namespace }}
       creationPolicy: Owner
       template:
         includeAllSecrets: false
         data:
-          apple-app-site-association.json: {{ printf "{{ .%s_apple_app_site_association_json.Value }}" $key | quote }}
-          assetlinks.json: {{ printf "{{ .%s_assetlinks_json.Value }}" $key | quote }}
+          apple-app-site-association.json: {{ printf "{{ .%s_APPLE_APP_SITE_ASSOCIATION_JSON.Value }}" (upper $key) | quote }}
+          assetlinks.json: {{ printf "{{ .%s_ASSETLINKS_JSON.Value }}" (upper $key) | quote }}
 ---
 {{- end}}
 {{- end}}
