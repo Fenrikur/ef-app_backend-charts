@@ -15,8 +15,7 @@ ingress:
   annotations:
 
 ## Allow use of Infisical (https://infisical.com) for secret management.
-## Secret keys are expected to be all uppercase to ensure backward compatibility.
-## Expects the following secrets per deployment, prefixed by deployment identifier:
+## Expects the following uppercase secret keys per deployment, prefixed by deployment identifier:
 ## - <deployment identifier all uppercase>_APPLE_APP_SITE_ASSOCIATION_JSON
 ##   (see https://developer.apple.com/documentation/xcode/supporting-associated-domains)
 ## - <deployment identifier all uppercase>_APPSETTINGS_JSON
